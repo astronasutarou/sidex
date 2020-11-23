@@ -34,6 +34,33 @@ def invalid_path(path):
   return '../' in path
 
 
+@app.route('/put/<path:target>', methods=['POST',])
+def put(target):
+  local_path = '{}/{}'.format(app.root,target)
+  filename = os.path.basename(local_path)
+  dirname = os.path.dirname(local_path)
+  emsg = lambda s: 'cannot create "{}": {{}}.\n'.format(target).format(s)
+  ## check if a valid token is given.
+  token = request.form.get('put_token')
+  if app.put_token is not None and token != app.put_token:
+    return Response(emsg('invalid token'), status=400)
+  ## assert path seems valid.
+  if invalid_path(target):
+    return Response(emsg('invalid path'), status=400)
+  ## override is not allowed.
+  if os.path.exists(local_path):
+    return Response(emsg('overwrite prohibited'), status=400)
+  ## create a file.
+  if 'payload' not in request.files:
+    return Response(emsg('"payload" is required'), status=400)
+  try:
+    request.files['payload'].save(local_path)
+    return Response('"{}" successfully uploaded.\n'.format(filename))
+  except Exception as e:
+    eprint(str(e), exc_info=e)
+    return Response(emsg(str(e)), status=500)
+
+
 @app.route('/get/<path:target>', methods=['GET','POST'])
 def get(target):
   local_path = '{}/{}'.format(app.root,target)
