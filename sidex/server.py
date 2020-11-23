@@ -16,3 +16,11 @@ werkzeug.handlers = [log_handler,]
 
 app = Flask(__name__)
 app.logger.handlers = [log_handler,]
+
+
+@app.context_processor
+def override_url_for():
+  def url_for_subdir(endpoint, *args, **options):
+    subdir = '/{}'.format(app.subdir) if app.subdir else ''
+    return subdir+url_for(endpoint, *args, **options)
+  return dict(url_for=furl_for_subdir)
