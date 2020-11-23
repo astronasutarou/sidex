@@ -24,3 +24,7 @@ def override_url_for():
     subdir = '/{}'.format(app.subdir) if app.subdir else ''
     return subdir+url_for(endpoint, *args, **options)
   return dict(url_for=furl_for_subdir)
+
+
+def eprint(message, exc_info=None):
+  app.logger.error('{}'.format(message), exc_info=exc_info)
