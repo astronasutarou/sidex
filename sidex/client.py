@@ -1,24 +1,51 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-import os, re, logging, requests
-
+import os, sys, re, logging, requests
 
 
 if __name__ == '__main__':
   from argparse import ArgumentParser as ap
-  parser = ap(description='sidex minimal client')
+  parser = ap(description='SIDEX minimal client')
   parser.add_argument('url', type=str,
     help='address to SIDEX server')
   parser.add_argument(
-    '--get-token', dest='get_token', metavar='token', type=str,
-    help='limit get function by setting token')
+    '-d', '--delete', dest='delete', action='store_true',
+    help='delete file')
   parser.add_argument(
-    '--put-token', dest='put_token', metavar='token', type=str,
-    help='enable put function by setting token')
+    '-f', '--file', dest='filename', metavar='filename', type=str,
+    help='file to be upload')
   parser.add_argument(
-    '--delete-token', dest='delete_token', metavar='token', type=str,
-    help='enable delete function by setting token.')
+    '--token', dest='token', metavar='token', type=str,
+    help='set token')
 
   args = parser.parse_args()
+  eprint = lambda s: print(s, file=sys.stderr)
 
-  payload =
+  if args.delete is True and args.filename is not None:
+    eprint('error: option conflicted.')
+    exit(1)
+
+  method = 'get'
+  filename = os.path.basename(args.url)
+
+  if args.delete is True:
+    method = 'delete'
+  if args.filename is not None:
+    method = 'put'
+    with open(args.filename,'rb') as f:
+      files = { 'payload': f.read(), }
+  else:
+    files = None
+
+  if method == 'get' and os.path.exists(filename):
+    eprint('error: file "{}" already exists.'.format(filename))
+    exit(1)
+
+  data = { 'method': method, 'token': args.token }
+  req = requests.post(args.url, data=data, files=files)
+
+  if method == 'get':
+    with open(filename, 'wb') as f:
+      f.write(req.content)
+  else:
+    print(req.text.strip())
