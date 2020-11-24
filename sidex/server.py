@@ -37,6 +37,41 @@ def invalid_path(path):
   return '../' in path
 
 
+def default_delete_function(req, local_path, **options):
+  filename = os.path.basename(local_path)
+  os.unlink(local_path)
+  return Response('"{}" successfully deleted.\n'.format(filename))
+
+
+@app.route('/delete/<path:target>', methods=['POST',])
+def delete(target):
+  local_path = '{}/{}'.format(app.workdir,target)
+  filename = os.path.basename(local_path)
+  dirname = os.path.dirname(local_path)
+  emsg = lambda s: 'cannot delete "{}": {{}}.\n'.format(target).format(s)
+  ## check if a valid token is given.
+  if app.delete_token is None:
+    return Response(emsg('function disabled'), status=400)
+  token = request.form.get('delete_token')
+  dprint('delete_token = {}'.format(token))
+  if app.delete_token is not None and token != app.delete_token:
+    return Response(emsg('invalid token'), status=400)
+  ## assert path seems valid.
+  if invalid_path(target):
+    eprint('invalid path: {}'.format(target))
+    return Response(emsg('invalid path'), status=400)
+  ## create a file.
+  try:
+    return app.delete_function(request,local_path)
+  except FileNotFoundError as e:
+    eprint(str(e))
+    return Response(emsg('file not found'), status=404)
+  except Exception as e:
+    eprint(str(e))
+    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    return Response(errmsg, status=500)
+
+
 def default_put_function(req, local_path, **options):
   filename = os.path.basename(local_path)
   req.files['payload'].save(local_path)
