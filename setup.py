@@ -39,5 +39,4 @@ if __name__ == '__main__':
     url='https://bitbucket.org/ryou_ohsawa/sidex/src/master/',
     license=license,
     classifiers=classifiers,
-    install_requires=['flask','requests',],
-    ext_modules=extensions)
+    install_requires=['flask','requests',])
