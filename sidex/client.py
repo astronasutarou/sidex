@@ -19,10 +19,10 @@ if __name__ == '__main__':
     help='set token')
 
   args = parser.parse_args()
-  eprint = lambda s: print(s, file=sys.stderr)
+  eprint = lambda s: print('error: '+s, file=sys.stderr)
 
   if args.delete is True and args.filename is not None:
-    eprint('error: option conflicted.')
+    eprint('option conflicted.')
     exit(1)
 
   method = 'get'
@@ -38,14 +38,21 @@ if __name__ == '__main__':
     files = None
 
   if method == 'get' and os.path.exists(filename):
-    eprint('error: file "{}" already exists.'.format(filename))
+    eprint('file "{}" already exists.'.format(filename))
     exit(1)
 
-  data = { 'method': method, 'token': args.token }
-  req = requests.post(args.url, data=data, files=files)
+  try:
+    data = { 'method': method, 'token': args.token }
+    req = requests.post(args.url, data=data, files=files)
+    if req.ok is False:
+      eprint(req.text.strip())
+      req.raise_for_status()
 
-  if method == 'get':
-    with open(filename, 'wb') as f:
-      f.write(req.content)
-  else:
-    print(req.text.strip())
+    if method == 'get':
+      with open(filename, 'wb') as f:
+        f.write(req.content)
+    else:
+      print(req.text.strip())
+  except Exception as e:
+    eprint(str(e))
+    exit(1)
