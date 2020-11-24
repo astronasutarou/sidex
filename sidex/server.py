@@ -43,8 +43,7 @@ def default_delete_function(req, local_path, **options):
   return Response('"{}" successfully deleted.\n'.format(filename))
 
 
-@app.route('/delete/<path:target>', methods=['POST',])
-def delete(target):
+def delete(req,target, **options):
   local_path = '{}/{}'.format(app.workdir,target)
   filename = os.path.basename(local_path)
   dirname = os.path.dirname(local_path)
@@ -52,8 +51,8 @@ def delete(target):
   ## check if a valid token is given.
   if app.delete_token is None:
     return Response(emsg('function disabled'), status=400)
-  token = request.form.get('delete_token')
-  dprint('delete_token = {}'.format(token))
+  token = req.form.get('token')
+  dprint('token = "{}"'.format(token))
   if app.delete_token is not None and token != app.delete_token:
     return Response(emsg('invalid token'), status=400)
   ## assert path seems valid.
@@ -62,7 +61,7 @@ def delete(target):
     return Response(emsg('invalid path'), status=400)
   ## create a file.
   try:
-    return app.delete_function(request,local_path)
+    return app.delete_function(req,local_path, **options)
   except FileNotFoundError as e:
     eprint(str(e))
     return Response(emsg('file not found'), status=404)
@@ -74,36 +73,35 @@ def delete(target):
 
 def default_put_function(req, local_path, **options):
   filename = os.path.basename(local_path)
+  dirname = os.path.dirname(local_path)
   req.files['payload'].save(local_path)
-  return Response('"{}" successfully uploaded.\n'.format(filename))
+  return Response('successfully uploaded to "{}".\n'.format(filename))
 
 
-@app.route('/put/<path:target>', methods=['POST',])
-def put(target):
+def put(req, target, **options):
   local_path = '{}/{}'.format(app.workdir,target)
   filename = os.path.basename(local_path)
-  dirname = os.path.dirname(local_path)
   emsg = lambda s: 'cannot create "{}": {{}}.\n'.format(target).format(s)
   ## check if a valid token is given.
   if app.put_token is None:
     return Response(emsg('function disabled'), status=400)
-  token = request.form.get('put_token')
-  dprint('put_token = {}'.format(token))
+  token = req.form.get('token')
+  dprint('token = "{}"'.format(token))
   if app.put_token is not None and token != app.put_token:
     return Response(emsg('invalid token'), status=400)
   ## assert path seems valid.
   if invalid_path(target):
     eprint('invalid path: {}'.format(target))
     return Response(emsg('invalid path'), status=400)
-  ## override is not allowed.
+  ## overwrite is not allowed.
   if os.path.exists(local_path):
     eprint('file "{}" already exists.'.format(local_path))
-    return Response(emsg('overwrite prohibited'), status=400)
+    return Response(emsg('cannot overwrite files'), status=400)
   ## create a file.
-  if 'payload' not in request.files:
+  if 'payload' not in req.files:
     return Response(emsg('"payload" is required'), status=400)
   try:
-    return app.put_function(request,local_path)
+    return app.put_function(req,local_path, **options)
   except FileNotFoundError as e:
     eprint(str(e))
     return Response(emsg('file not found'), status=404)
@@ -118,18 +116,15 @@ def default_get_function(req, local_path, **options):
     return Response(f.read(), mimetype='application/octet-stream')
 
 
-@app.route('/get/<path:target>', methods=['GET','POST'])
-def get(target):
+def get(req, target, **options):
   local_path = '{}/{}'.format(app.workdir,target)
   filename = os.path.basename(local_path)
   emsg = lambda s: 'cannot access "{}": {{}}.\n'.format(target).format(s)
   ## check if a valid token is given.
   if app.get_token is not None:
-    dprint('token is requred.')
-    if request.method == 'GET':
-      return Response(emsg('token required'), status=400)
-    token = request.form.get('get_token')
-    dprint('get_token = "{}"'.format(token))
+    dprint('get function requres a token.')
+    token = req.form.get('token')
+    dprint('token = "{}"'.format(token))
     if token != app.get_token:
       return Response(emsg('invalid token'), status=400)
   ## assert path seems valid.
@@ -139,7 +134,7 @@ def get(target):
   ## access to file.
   #if os.path.exists(local_path):
   try:
-    return app.get_function(request, local_path)
+    return app.get_function(req, local_path, **options)
   except FileNotFoundError as e:
     eprint(str(e))
     return Response(emsg('file not found'), status=404)
@@ -152,9 +147,22 @@ def get(target):
     return Response(errmsg, status=500)
 
 
-@app.route('/')
-def index():
-  return Response('under construction.\n', status=501)
+@app.route('/<path:target>', methods=['GET','POST'])
+def index(target):
+  local_path = '{}/{}'.format(app.workdir,target)
+  emsg = lambda s: 'cannot access "{}": {{}}.\n'.format(target).format(s)
+  if request.method == 'GET':
+    return Response('under construction.\n', status=501)
+  else:
+    method = request.form.get('method','none').lower()
+    if method == 'get':
+      return get(request, target)
+    elif method == 'put':
+      return put(request, target)
+    elif method == 'delete':
+      return delete(request, target)
+    else:
+      return Response('invalid method: {}.\n'.format(method), status=400)
 
 
 def setup_sidex(
