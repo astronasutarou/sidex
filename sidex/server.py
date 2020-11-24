@@ -4,18 +4,10 @@ from flask import Flask, Response
 from flask import request, url_for, render_template
 import os, re, logging, requests
 
-
-log_handler = logging.StreamHandler()
-log_handler.setFormatter(logging.Formatter(
-  fmt='%(asctime)s %(levelname)s:%(name)s:%(message)s',
-  datefmt='%Y-%m-%d %H:%M:%S'))
-
 werkzeug = logging.getLogger('werkzeug')
 werkzeug.setLevel('ERROR')
-werkzeug.handlers = [log_handler,]
 
 app = Flask(__name__)
-app.logger.handlers = [log_handler,]
 
 
 @app.context_processor
@@ -27,73 +19,132 @@ def override_url_for():
 
 
 def eprint(message, exc_info=None):
-  app.logger.error('{}'.format(message), exc_info=exc_info)
+  remote = request.remote_addr
+  app.logger.error(remote+':{}'.format(message), exc_info=exc_info)
+
+
+def iprint(message):
+  remote = request.remote_addr
+  app.logger.info(remote+':{}'.format(message))
+
+
+def dprint(message):
+  remote = request.remote_addr
+  app.logger.debug(remote+':{}'.format(message))
 
 
 def invalid_path(path):
   return '../' in path
 
 
+def default_put_function(req, local_path, **options):
+  filename = os.path.basename(local_path)
+  req.files['payload'].save(local_path)
+  return Response('"{}" successfully uploaded.\n'.format(filename))
+
+
 @app.route('/put/<path:target>', methods=['POST',])
 def put(target):
-  local_path = '{}/{}'.format(app.root,target)
+  local_path = '{}/{}'.format(app.workdir,target)
   filename = os.path.basename(local_path)
   dirname = os.path.dirname(local_path)
   emsg = lambda s: 'cannot create "{}": {{}}.\n'.format(target).format(s)
   ## check if a valid token is given.
+  if app.put_token is None:
+    return Response(emsg('function disabled'), status=400)
   token = request.form.get('put_token')
+  dprint('put_token = {}'.format(token))
   if app.put_token is not None and token != app.put_token:
     return Response(emsg('invalid token'), status=400)
   ## assert path seems valid.
   if invalid_path(target):
+    eprint('invalid path: {}'.format(target))
     return Response(emsg('invalid path'), status=400)
   ## override is not allowed.
   if os.path.exists(local_path):
+    eprint('file "{}" already exists.'.format(local_path))
     return Response(emsg('overwrite prohibited'), status=400)
   ## create a file.
   if 'payload' not in request.files:
     return Response(emsg('"payload" is required'), status=400)
   try:
-    request.files['payload'].save(local_path)
-    return Response('"{}" successfully uploaded.\n'.format(filename))
+    return app.put_function(request,local_path)
+  except FileNotFoundError as e:
+    eprint(str(e))
+    return Response(emsg('file not found'), status=404)
   except Exception as e:
-    eprint(str(e), exc_info=e)
-    return Response(emsg(str(e)), status=500)
+    eprint(str(e))
+    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    return Response(errmsg, status=500)
+
+
+def default_get_function(req, local_path, **options):
+  with open(local_path, 'rb') as f:
+    return Response(f.read(), mimetype='application/octet-stream')
 
 
 @app.route('/get/<path:target>', methods=['GET','POST'])
 def get(target):
-  local_path = '{}/{}'.format(app.root,target)
+  local_path = '{}/{}'.format(app.workdir,target)
   filename = os.path.basename(local_path)
   emsg = lambda s: 'cannot access "{}": {{}}.\n'.format(target).format(s)
   ## check if a valid token is given.
-  if request.method == 'POST':
-    token = request.form.get('get_token')
-    if app.get_token is not None and token != app.get_token:
-      return Response(emsg('invalid token'), status=400)
-  elif request.method == 'GET':
-    if app.get_token is not None:
+  if app.get_token is not None:
+    dprint('token is requred.')
+    if request.method == 'GET':
       return Response(emsg('token required'), status=400)
+    token = request.form.get('get_token')
+    dprint('get_token = "{}"'.format(token))
+    if token != app.get_token:
+      return Response(emsg('invalid token'), status=400)
   ## assert path seems valid.
   if invalid_path(target):
+    eprint('invalid path: {}'.format(target))
     return Response(emsg('invalid path'), status=500)
   ## access to file.
-  if os.path.exists(local_path):
-    if os.path.isdir(local_path):
-      return Response(emsg('not a file'), status=500)
-    try:
-      with open(local_path, 'rb') as f:
-        return Response(f.read(), mimetype='application/octet-stream')
-    except Exception as e:
-      eprint(str(e), exc_info=e)
-      return Response(emsg(str(e)), status=500)
-  else:
-    return Response(emsg('no such file'), status=404)
+  #if os.path.exists(local_path):
+  try:
+    return app.get_function(request, local_path)
+  except FileNotFoundError as e:
+    eprint(str(e))
+    return Response(emsg('file not found'), status=404)
+  except IsADirectoryError as e:
+    eprint(str(e))
+    return Response(emsg('directory requested'), status=400)
+  except Exception as e:
+    eprint(str(e))
+    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    return Response(errmsg, status=500)
 
 
 @app.route('/')
 def index():
   return Response('under construction.\n', status=501)
+
+
+def setup_sidex(
+    workdir, subdir=None,
+    get_function=default_get_function,
+    put_function=default_put_function,
+    delete_function=default_delete_function,
+    get_token=None, put_token=None, delete_token=None,
+    log_handler=None, log_level='INFO'):
+  if get_token is not None: assert len(get_token) > 0
+  if put_token is not None: assert len(put_token) > 0
+  if delete_token is not None: assert len(delete_token) > 0
+  app.workdir = workdir
+  app.get_function = get_function
+  app.put_function = put_function
+  app.delete_function = delete_function
+  app.get_token = get_token
+  app.put_token = put_token
+  app.delete_token = delete_token
+  app.subdir = subdir
+  app.logger.setLevel(log_level)
+  if log_handler is not None:
+    werkzeug.handlers = []
+    app.logger.handlers = [log_handler,]
+  return app
 
 
 if __name__ == '__main__':
@@ -125,14 +176,15 @@ if __name__ == '__main__':
 
   args = parser.parse_args()
 
-  if args.get_token is not None: assert len(args.get_token) > 0
-  if args.put_token is not None: assert len(args.put_token) > 0
-  if args.delete_token is not None: assert len(args.delete_token) > 0
+  log_level = 'DEBUG' if args.debug else 'INFO'
+  log_handler = logging.StreamHandler()
+  log_handler.setFormatter(logging.Formatter(
+    fmt='[%(asctime)s] %(levelname)s:%(name)s:%(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'))
 
-  app.subdir = args.subdir
-  app.root = args.target
-  app.get_token = args.get_token
-  app.put_token = args.put_token
-  app.delete_token = args.delete_token
-  logleve = 'DEBUG' if args.debug else 'INFO'
-  app.run(host=args.host, port=args.port, threaded=True, debug=args.debug)
+  server = setup_sidex(
+    args.target, subdir=args.subdir,
+    get_token=args.get_token, put_token=args.put_token,
+    delete_token=args.delete_token,
+    log_handler=log_handler, log_level=log_level)
+  server.run(host=args.host, port=args.port, threaded=True, debug=args.debug)
