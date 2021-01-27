@@ -6,7 +6,7 @@ from . setup import setup_sidex
 if __name__ == '__main__':
   from argparse import ArgumentParser as ap
   import logging
-  parser = ap(description='sidex server process')
+  parser = ap(prog='server', description='sidex server process')
   parser.add_argument('target', type=str,
     help='target directory')
   parser.add_argument(

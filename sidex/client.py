@@ -5,7 +5,7 @@ import os, sys, re, logging, requests
 
 if __name__ == '__main__':
   from argparse import ArgumentParser as ap
-  parser = ap(description='SIDEX minimal client')
+  parser = ap(prog='client', description='SIDEX minimal client')
   parser.add_argument('url', type=str,
     help='address to SIDEX server')
   parser.add_argument(
