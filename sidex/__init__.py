@@ -3,7 +3,7 @@
 ''' Simple Data Exchange Server
 
 This module provides a minimal framework to launch a file server
-running on the middleware `flask`. You are allowed to fetch, put,
+running on the middleware `Flask`. You are allowed to fetch, put,
 and delete files over HTTP.
 
 You can launch a server on the command line as follows:

@@ -1,5 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+''' A command-line SIDEX server.
+
+This file provides a command-line SIDEX server.
+A detailed usage is available by typing the following command:
+
+   python -m sidex.server -h
+'''
 from . setup import setup_sidex
 
 

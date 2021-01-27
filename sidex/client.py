@@ -1,5 +1,13 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+''' A command-line SIDEX client.
+
+This file provides a command-line SIDEX client.
+A detailed usage is available by typing the following command:
+
+   python -m sidex.client -h
+'''
+
 import os, sys, re, logging, requests
 
 
