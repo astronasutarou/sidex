@@ -1,0 +1,10 @@
+site_name: sidex
+theme: readthedocs
+markdown_extensions:
+  - mdx_math
+  - admonition
+  - footnotes
+  - def_list
+  - codehilite
+extra_javascript: 
+  - http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
