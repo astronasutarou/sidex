@@ -177,7 +177,7 @@ def default_put_function(req, local_path, **options):
 
   This function create a file stored in <req> at <local_path>.
   This fails when the local directory does not exist. Note that
-  any existing file can be overwritten.
+  any existing file cannot be overwritten.
 
   Args:
     req (flask.request):
