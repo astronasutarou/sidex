@@ -7,7 +7,7 @@ A detailed usage is available by typing the following command:
 
    python -m sidex.server -h
 '''
-from . setup import setup_sidex
+from . setup import setup
 
 
 if __name__ == '__main__':
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     fmt='[%(asctime)s] %(levelname)s:%(name)s:%(message)s',
     datefmt='%Y-%m-%d %H:%M:%S'))
 
-  server = setup_sidex(
+  server = setup(
     args.target, subdir=args.subdir,
     get_token=args.get_token, put_token=args.put_token,
     delete_token=args.delete_token,

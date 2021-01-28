@@ -383,7 +383,7 @@ The `put` and `delete` methods also requires the `token` field.
       return Response('invalid method: {}.\n'.format(method), status=400)
 
 
-def setup_sidex(
+def setup(
     workdir, subdir=None,
     get_function=default_get_function,
     put_function=default_put_function,

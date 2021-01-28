@@ -8,7 +8,7 @@ a query to a sidex server.
 import requests
 
 
-def sidex_request(url,method,filename=None,token=None):
+def request(url,method,filename=None,token=None):
   '''
   Make a request to a sidex server.
 

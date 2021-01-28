@@ -30,5 +30,5 @@ The SIDEX provides a way to customize the functions. The default
 behaviors of any methods can be overridden.
 '''
 
-from . setup import setup_sidex
-from . request import sidex_request
+from . setup import setup
+from . request import request
