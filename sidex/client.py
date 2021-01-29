@@ -27,6 +27,9 @@ if __name__ == '__main__':
     help='set token')
 
   args = parser.parse_args()
+  ## Leading "http://" can be omitted.
+  if not re.match('^https?://',args.url):
+    args.url = 'http://' + args.url
   eprint = lambda s: print('error: '+s, file=sys.stderr)
 
   if args.delete is True and args.filename is not None:
