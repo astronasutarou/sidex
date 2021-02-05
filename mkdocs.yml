@@ -1,5 +1,12 @@
 site_name: sidex
 nav:
+  - index.md
+  - References:
+    - refs/server.md
+    - refs/client.md
+  - External Links:
+    - sidex on bitbucket: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
+    - sidex on PyPi: https://pypi.org/project/sidex/
 theme:
   name: readthedocs
 markdown_extensions:
