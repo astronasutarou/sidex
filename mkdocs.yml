@@ -9,7 +9,6 @@ nav:
     - sidex on PyPi: https://pypi.org/project/sidex/
 theme:
   name: material
-#  name: readthedocs
 markdown_extensions:
   - mdx_math
   - admonition
