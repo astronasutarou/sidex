@@ -30,8 +30,8 @@ The fetched file is saved in the current directory.
 
 Further information can be found in the following links:
 
-- [How to launch a SIDEX server](/server)
-- [A command-line tool to access a SIDEX server](/client)
+- [How to launch a SIDEX server](/refs/server)
+- [A command-line tool to access a SIDEX server](/refs/client)
 
 ## Dependencies
 The `sidex` depends on the following modules:
