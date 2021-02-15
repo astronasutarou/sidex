@@ -8,7 +8,7 @@ nav:
     - sidex on bitbucket: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
     - sidex on PyPi: https://pypi.org/project/sidex/
 theme:
-  name: material
+  name: readthedocs
 markdown_extensions:
   - admonition
   - footnotes
