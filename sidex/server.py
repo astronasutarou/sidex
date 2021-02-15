@@ -32,7 +32,7 @@ if __name__ == '__main__':
     '--delete-token', dest='delete_token', metavar='token', type=str,
     help='enable delete function by setting token.')
   parser.add_argument(
-    '--subdir', dest='subdir', metavar='subdirectory', type=str,
+    '--subdir', dest='subdir', metavar='subdir', type=str,
     help='set subdirectory')
   parser.add_argument(
     '--debug', dest='debug', action='store_true',

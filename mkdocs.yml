@@ -2,8 +2,8 @@ site_name: sidex
 nav:
   - index.md
   - References:
-    - refs/server.md
-    - refs/client.md
+    - Server: refs/server.md
+    - Client: refs/client.md
   - External Links:
     - sidex on bitbucket: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
     - sidex on PyPi: https://pypi.org/project/sidex/
