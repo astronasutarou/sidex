@@ -340,14 +340,29 @@ def get(req, target, **options):
     return Response(errmsg, status=500)
 
 
-@app.route('/<path:target>', methods=['GET', 'POST'])
-def access_point(target):
+@app.route('/<path:target>', methods=['GET',])
+def access_by_get(target):
   ''' The access point of the SIDEX server.
 
-  This function handles the request to the SIDEX server.
-  Only the <POST> resuest is available. An instruction message
-  will be returned in case of the <GET> request.
+  This function handles the GET request to the SIDEX server.
+  This works only if the `token` is not specified.
 
+  Args:
+    target (str):
+        The path to the requested resource.
+
+  Returns:
+    flask.Response:
+        The response instance from the requested method.
+  '''
+  return get(request, target)
+
+
+@app.route('/<path:target>', methods=['POST',])
+def access_get_by_post(target):
+  ''' The access point of the SIDEX server.
+
+  This function handles the POST request to the SIDEX server.
   The `method` field is mandatory. The value should be one of `get`,
   `put` and `delete`. The corresponding function will be called.
 
@@ -361,26 +376,15 @@ def access_point(target):
     flask.Response:
         The response instance from the requested method.
   '''
-  local_path = '{}/{}'.format(app.workdir,target)
-  emsg = lambda s: 'cannot access "{}": {{}}.\n'.format(target).format(s)
-  if request.method == 'GET':
-    errmsg = '''GET is not available in the SIDEX server.
-
-Use POST to access the SIDEX server.
-The `method` field is required. Choose from `get`, `put` or `delete`.
-The `put` and `delete` methods also requires the `token` field.
-'''
-    return Response(errmsg, status=501)
+  method = request.form.get('method','none').lower()
+  if method == 'get':
+    return get(request, target)
+  elif method == 'put':
+    return put(request, target)
+  elif method == 'delete':
+    return delete(request, target)
   else:
-    method = request.form.get('method','none').lower()
-    if method == 'get':
-      return get(request, target)
-    elif method == 'put':
-      return put(request, target)
-    elif method == 'delete':
-      return delete(request, target)
-    else:
-      return Response('invalid method: {}.\n'.format(method), status=400)
+    return Response('invalid method: {}.\n'.format(method), status=400)
 
 
 def setup(
