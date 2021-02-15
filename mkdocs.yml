@@ -10,6 +10,7 @@ nav:
 theme:
   name: readthedocs
 markdown_extensions:
+  - mdx_math
   - admonition
   - footnotes
   - def_list
