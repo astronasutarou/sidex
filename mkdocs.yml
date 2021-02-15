@@ -10,9 +10,6 @@ nav:
 theme:
   name: readthedocs
 markdown_extensions:
-  - mdx_math
   - admonition
   - footnotes
   - def_list
-extra_javascript:
-  - http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
