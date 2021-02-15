@@ -14,22 +14,21 @@ import os, sys, re, logging, requests
 if __name__ == '__main__':
   from argparse import ArgumentParser as ap
   parser = ap(prog='client', description='SIDEX minimal client')
-  parser.add_argument('url', type=str,
+  parser.add_argument('filename', type=str, nargs='?',
+    help='filename to be uploaded (only requred in put mode)')
+  parser.add_argument('target', type=str,
     help='address to SIDEX server')
   parser.add_argument(
     '-d', '--delete', dest='delete', action='store_true',
     help='delete file')
-  parser.add_argument(
-    '-f', '--file', dest='filename', metavar='filename', type=str,
-    help='file to be upload')
   parser.add_argument(
     '--token', dest='token', metavar='token', type=str,
     help='set token')
 
   args = parser.parse_args()
   ## Leading "http://" can be omitted.
-  if not re.match('^https?://',args.url):
-    args.url = 'http://' + args.url
+  if not re.match('^https?://',args.target):
+    args.target = 'http://' + args.target
   eprint = lambda s: print('error: '+s, file=sys.stderr)
 
   if args.delete is True and args.filename is not None:
@@ -37,7 +36,7 @@ if __name__ == '__main__':
     exit(1)
 
   method = 'get'
-  filename = os.path.basename(args.url)
+  filename = os.path.basename(args.target)
 
   if args.delete is True:
     method = 'delete'
@@ -54,7 +53,7 @@ if __name__ == '__main__':
 
   try:
     data = { 'method': method, 'token': args.token }
-    req = requests.post(args.url, data=data, files=files)
+    req = requests.post(args.target, data=data, files=files)
     if req.ok is False:
       eprint(req.text.strip())
       req.raise_for_status()

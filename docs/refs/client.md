@@ -8,17 +8,16 @@ Basic usage of the command line tool provided by `sidex.client` is described as 
 
 ``` none
 $ python -m sidex.client -h
-usage: client [-h] [-d] [-f filename] [--token token] url
+usage: client [-h] [-d] [--token token] [filename] target
 
 SIDEX minimal client
 
 positional arguments:
-  url                   address to SIDEX server
+  filename       filename to be uploaded (only requred in put mode)
+  target         address to SIDEX server
 
 optional arguments:
   -h, --help            show this help message and exit
   -d, --delete          delete file
-  -f filename, --file filename
-                        file to be upload
   --token token         set token
 ```
