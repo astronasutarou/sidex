@@ -283,6 +283,37 @@ def default_get_function(req, local_path, **options):
     return Response(f.read(), mimetype='application/octet-stream')
 
 
+def streaming_get_function(req, local_path, **options):
+  ''' Define the streaming version of the `get` method.
+
+  Returns the file content located at <local_path>.
+
+  Args:
+    req (flask.request):
+        The request instance given by Flask.
+    local_path (str):
+        The absolute path to the requested resource.
+    **options:
+        Arbitrary option arguments.
+        Currently no option is passed to this function.
+
+  Returns:
+    flask.Response:
+        A response message.
+  '''
+  bufsize = options.get('bufsize', 65535)
+  def is_active(FileStream):
+    b = FileStream.read(1)
+    FileStream.seek(-1,1)
+    return bool(b)
+  def streaming():
+    with open(local_path, 'rb') as f:
+      n_read = bufsize
+      while is_active(f):
+        yield f.read(bufsize)
+  return Response(streaming(), mimetype='application/octet-stream')
+
+
 def get(req, target, **options):
   ''' Provide the `get` method.
 
