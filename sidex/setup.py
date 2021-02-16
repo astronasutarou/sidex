@@ -357,11 +357,16 @@ def default_dump_function(req, local_paths, **options):
     flask.Response:
         A response message.
   '''
-  buf = io.BytesIO()
-  with tarfile.open(fileobj=buf, mode='w') as arv:
-    for filename in local_paths: arv.add(filename)
-  buf.seek(0)
-  return Response(buf.read(), mimetype='application/octet-stream')
+  def streaming():
+    buf = io.BytesIO()
+    with tarfile.open(fileobj=buf, mode='w') as arv:
+      for filename in local_paths:
+        basename = os.path.basename(filename)
+        buf.truncate(0)
+        arv.add(filename, arcname=basename)
+        buf.seek(0)
+        yield buf.read().decode()
+  return Response(streaming(), mimetype='application/octet-stream')
 
 
 def dump(req, filelist, **options):
