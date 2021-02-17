@@ -392,11 +392,15 @@ def default_dump_function(req, local_paths, **options):
     buf = io.BytesIO()
     with tarfile.open(fileobj=buf, mode='w') as arv:
       for filename in local_paths:
+        pos = buf.tell()
         basename = os.path.basename(filename)
-        buf.truncate(0)
         arv.add(filename, arcname=basename)
-        buf.seek(0)
-        yield buf.read().decode()
+        buf.seek(pos)
+        yield buf.read()
+        ## the stream position should be set something but zero.
+        ## an init process is called when the stream position is zero.
+        buf.seek(1)
+        buf.truncate(1)
   return Response(streaming(), mimetype='application/octet-stream')
 
 
