@@ -18,7 +18,6 @@ theme:
     primary: blue grey
     accent: deep orange
   features:
-    - navigation.expand
     - navigation.tabs
     - header.autohide
 
