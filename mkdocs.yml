@@ -1,16 +1,48 @@
 site_name: sidex
+site_url:
+site_author: Ryou Ohsawa
+site_description:
+  Simple Data Exchange Server over HTTP.
+
+repo_name: ryou_ohsawa/sidex
+repo_url: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
+edit_uri: ""
+
+theme:
+  name: 'material'
+  icon:
+    logo: logo
+  language: 'en'
+  palette:
+    scheme: default
+    primary: blue grey
+    accent: deep orange
+  features:
+    - navigation.indexes
+    - navigation.tabs
+    - header.autohide
+
+markdown_extensions:
+  - toc:
+      toc_depth: 3
+  - extra
+  - admonition
+  - smarty
+  - sane_lists
+  - meta
+  - pymdownx.details
+  - pymdownx.critic
+  - pymdownx.highlight
+  - pymdownx.inlinehilite
+  - pymdownx.superfences
+  - pymdownx.snippets:
+      check_paths: True
+
 nav:
-  - index.md
+  - Front Page:
+    - "Top Page": index.md
+    - bitbucket: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
+    - PyPi: https://pypi.org/project/sidex/
   - References:
     - Server: refs/server.md
     - Client: refs/client.md
-  - External Links:
-    - sidex on bitbucket: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
-    - sidex on PyPi: https://pypi.org/project/sidex/
-theme:
-  name: material
-markdown_extensions:
-  - mdx_math
-  - admonition
-  - footnotes
-  - def_list

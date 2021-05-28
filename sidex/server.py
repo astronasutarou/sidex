@@ -7,6 +7,7 @@ A detailed usage is available by typing the following command:
 
    python -m sidex.server -h
 '''
+
 from . setup import setup
 
 
