@@ -18,7 +18,7 @@ theme:
     primary: blue grey
     accent: deep orange
   features:
-    - navigation.indexes
+    - navigation.expand
     - navigation.tabs
     - header.autohide
 
@@ -40,7 +40,7 @@ markdown_extensions:
 
 nav:
   - Front Page:
-    - "Top Page": index.md
+    - Top Page: index.md
     - bitbucket: https://bitbucket.org/ryou_ohsawa/sidex/src/master/
     - PyPi: https://pypi.org/project/sidex/
   - References:
