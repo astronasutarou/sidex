@@ -1,6 +1,6 @@
 # Simple Data Exchange Server over HTTP
 
-The `sidex` provides a framework to host a minimal file server running on the `Flask`. Using the `sidex`, you can easily make your local file accessible on the network. The `sidex` server provides methods to fetch, upload, and delete files over HTTP.
+The `sidex` provides a framework to host a minimal file server running on the `Flask`. The `sidex` server provides methods to fetch, upload, and delete files over HTTP. You can easily make your local files accessible on the network by `sidex`.
 
 
 
@@ -32,6 +32,7 @@ Further information can be found in the following links:
 
 - [How to launch a SIDEX server](/refs/server)
 - [A command-line tool to access a SIDEX server](/refs/client)
+
 
 ## Dependencies
 The `sidex` depends on the following modules:
