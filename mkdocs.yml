@@ -18,7 +18,7 @@ theme:
     primary: blue grey
     accent: deep orange
   features:
-    - navigation.tabs
+    - navigation.sections
     - header.autohide
 
 markdown_extensions:

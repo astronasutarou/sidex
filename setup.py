@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-from glob import glob
-from setuptools import setup, find_packages, Extension
-import os,sys,re
+from setuptools import setup, find_packages
 
 
 with open('README.md', 'r') as fd:
@@ -13,6 +11,11 @@ with open('README.md', 'r') as fd:
   long_description = fd.read()
   license = 'MIT'
 
+
+requirements = (
+  'flask>=2.0',
+  'requests>=2.27',
+)
 
 classifiers = [
   'Development Status :: 3 - Alpha',
@@ -40,4 +43,4 @@ if __name__ == '__main__':
     license=license,
     packages=find_packages(),
     classifiers=classifiers,
-    install_requires=['flask','requests',])
+    install_requires=requirements)
