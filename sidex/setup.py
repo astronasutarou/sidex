@@ -8,8 +8,8 @@ The behaviours of the `get`, `put`, and `delete` methods are defined.
 Use the `setup` function to launch a customized SIDEX server.
 '''
 from flask import Flask, Response
-from flask import request, url_for, render_template
-import os, re, io, tarfile, logging, requests
+from flask import request, url_for
+import os, io, tarfile, logging
 
 werkzeug = logging.getLogger('werkzeug')
 werkzeug.setLevel('ERROR')
@@ -144,11 +144,11 @@ def delete(req, target, **options):
     flask.Response:
         A response message.
   '''
-  local_path = '{}/{}'.format(app.workdir,target)
+  local_path = '{}/{}'.format(app.workdir, target)
   filename = os.path.basename(local_path)
   dirname = os.path.dirname(local_path)
   emsg = lambda s: 'cannot delete "{}": {{}}.\n'.format(target).format(s)
-  ## check if a valid token is given.
+  # check if a valid token is given.
   if app.delete_token is None:
     eprint('disabled function "delete" called.')
     return Response(emsg('function disabled'), status=400)
@@ -156,13 +156,13 @@ def delete(req, target, **options):
   dprint('token = "{}"'.format(token))
   if app.delete_token is not None and token != app.delete_token:
     return Response(emsg('invalid token'), status=400)
-  ## assert path seems valid.
+  # assert path seems valid.
   if invalid_path(target):
     eprint('invalid path: {}'.format(target))
     return Response(emsg('invalid path'), status=400)
-  ## delete a file.
+  # delete a file.
   try:
-    return app.delete_function(req,local_path, **options)
+    return app.delete_function(req, local_path, **options)
   except FileNotFoundError as e:
     eprint(str(e))
     return Response(emsg('file not found'), status=404)
@@ -228,10 +228,10 @@ def put(req, target, **options):
     flask.Response:
         A response message.
   '''
-  local_path = '{}/{}'.format(app.workdir,target)
+  local_path = '{}/{}'.format(app.workdir, target)
   filename = os.path.basename(local_path)
   emsg = lambda s: 'cannot create "{}": {{}}.\n'.format(target).format(s)
-  ## check if a valid token is given.
+  # check if a valid token is given.
   if app.put_token is None:
     eprint('disabled function "put" called.')
     return Response(emsg('function disabled'), status=400)
@@ -239,19 +239,19 @@ def put(req, target, **options):
   dprint('token = "{}"'.format(token))
   if app.put_token is not None and token != app.put_token:
     return Response(emsg('invalid token'), status=400)
-  ## assert path seems valid.
+  # assert path seems valid.
   if invalid_path(target):
     eprint('invalid path: {}'.format(target))
     return Response(emsg('invalid path'), status=400)
-  ## overwrite is not allowed.
+  # overwrite is not allowed.
   if os.path.exists(local_path):
     eprint('file "{}" already exists.'.format(local_path))
     return Response(emsg('cannot overwrite files'), status=400)
-  ## create a file.
+  # create a file.
   if 'payload' not in req.files:
     return Response(emsg('"payload" is required'), status=400)
   try:
-    return app.put_function(req,local_path, **options)
+    return app.put_function(req, local_path, **options)
   except FileNotFoundError as e:
     eprint(str(e))
     return Response(emsg('file not found'), status=404)
@@ -302,15 +302,17 @@ def streaming_get_function(req, local_path, **options):
         A response message.
   '''
   bufsize = options.get('bufsize', 65535)
+
   def is_active(FileStream):
     b = FileStream.read(1)
-    FileStream.seek(-1,1)
+    FileStream.seek(-1, 1)
     return bool(b)
+
   def streaming():
     with open(local_path, 'rb') as f:
-      n_read = bufsize
       while is_active(f):
         yield f.read(bufsize)
+
   return Response(streaming(), mimetype='application/octet-stream')
 
 
@@ -341,21 +343,21 @@ def get(req, target, **options):
     flask.Response:
         A response message.
   '''
-  local_path = '{}/{}'.format(app.workdir,target)
+  local_path = '{}/{}'.format(app.workdir, target)
   filename = os.path.basename(local_path)
   emsg = lambda s: 'cannot access "{}": {{}}.\n'.format(target).format(s)
-  ## check if a valid token is given.
+  # check if a valid token is given.
   if app.get_token is not None:
     dprint('"get" function requres a token.')
     token = req.form.get('token')
     dprint('token = "{}"'.format(token))
     if token != app.get_token:
       return Response(emsg('invalid token'), status=400)
-  ## assert path seems valid.
+  # assert path seems valid.
   if invalid_path(target):
     eprint('invalid path: {}'.format(target))
     return Response(emsg('invalid path'), status=500)
-  ## access to file.
+  # access to file.
   try:
     return app.get_function(req, local_path, **options)
   except FileNotFoundError as e:
@@ -397,8 +399,8 @@ def default_dump_function(req, local_paths, **options):
         arv.add(filename, arcname=basename)
         buf.seek(pos)
         yield buf.read()
-        ## the stream position should be set something but zero.
-        ## an init process is called when the stream position is zero.
+        # the stream position should be set something but zero.
+        # an init process is called when the stream position is zero.
         buf.seek(1)
         buf.truncate(1)
   return Response(streaming(), mimetype='application/octet-stream')
@@ -431,22 +433,22 @@ def dump(req, filelist, **options):
     flask.Response:
         A response message.
   '''
-  local_paths = ['{}/{}'.format(app.workdir,f) for f in filelist]
-  filenames = [os.path.basename(l) for l in local_paths]
+  local_paths = ['{}/{}'.format(app.workdir, f) for f in filelist]
+  filenames = [os.path.basename(p) for p in local_paths]
   emsg = lambda s: 'cannot access resources: {}.\n'.format(s)
-  ## check if a valid token is given.
+  # check if a valid token is given.
   if app.get_token is not None:
     dprint('"get" function requres a token.')
     token = req.form.get('token')
     dprint('token = "{}"'.format(token))
     if token != app.get_token:
       return Response(emsg('invalid token'), status=400)
-  ## assert path seems valid.
+  # assert path seems valid.
   for target in filelist:
     if invalid_path(target):
       eprint('invalid path: {}'.format(target))
       return Response(emsg('invalid path'), status=500)
-  ## access to file.
+  # access to file.
   try:
     return app.dump_function(req, local_paths, **options)
   except FileNotFoundError as e:
@@ -461,7 +463,7 @@ def dump(req, filelist, **options):
     return Response(errmsg, status=500)
 
 
-@app.route('/<path:target>', methods=['GET',])
+@app.route('/<path:target>', methods=['GET', ])
 def access_by_get(target):
   ''' The access point of the SIDEX server.
 
@@ -479,7 +481,7 @@ def access_by_get(target):
   return get(request, target)
 
 
-@app.route('/<path:target>', methods=['POST',])
+@app.route('/<path:target>', methods=['POST', ])
 def access_get_by_post(target):
   ''' The access point of the SIDEX server.
 
@@ -497,7 +499,7 @@ def access_get_by_post(target):
     flask.Response:
         The response instance from the requested method.
   '''
-  method = request.form.get('method','none').lower()
+  method = request.form.get('method', 'none').lower()
   if method == 'get':
     return get(request, target)
   elif method == 'put':
@@ -513,7 +515,7 @@ def root():
   if request.method == 'GET':
     return Response('It works! The SIDEX server is running.\n')
   else:
-    method = request.form.get('method','none').lower()
+    method = request.form.get('method', 'none').lower()
     if method == 'dump':
       filenames = request.form.getlist('filename')
       return dump(request, filenames)
@@ -582,5 +584,5 @@ def setup(
   app.logger.setLevel(log_level)
   if log_handler is not None:
     werkzeug.handlers = []
-    app.logger.handlers = [log_handler,]
+    app.logger.handlers = [log_handler, ]
   return app
