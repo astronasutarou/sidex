@@ -8,7 +8,7 @@ A detailed usage is available by typing the following command:
    python -m sidex.client -h
 '''
 
-import os, sys, re, logging, requests
+import os, sys, re, requests
 
 
 if __name__ == '__main__':
@@ -26,8 +26,8 @@ if __name__ == '__main__':
     help='set token')
 
   args = parser.parse_args()
-  ## Leading "http://" can be omitted.
-  if not re.match('^https?://',args.target):
+  # Leading "http://" can be omitted.
+  if not re.match('^https?://', args.target):
     args.target = 'http://' + args.target
   eprint = lambda s: print('error: '+s, file=sys.stderr)
 
@@ -42,8 +42,8 @@ if __name__ == '__main__':
     method = 'delete'
   if args.filename is not None:
     method = 'put'
-    with open(args.filename,'rb') as f:
-      files = { 'payload': f.read(), }
+    with open(args.filename, 'rb') as f:
+      files = {'payload': f.read()}
   else:
     files = None
 
@@ -52,7 +52,7 @@ if __name__ == '__main__':
     exit(1)
 
   try:
-    data = { 'method': method, 'token': args.token }
+    data = {'method': method, 'token': args.token}
     req = requests.post(args.target, data=data, files=files)
     if req.ok is False:
       eprint(req.text.strip())

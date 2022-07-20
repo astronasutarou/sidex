@@ -8,7 +8,7 @@ A detailed usage is available by typing the following command:
    python -m sidex.dump -h
 '''
 
-import os, sys, re, logging, requests
+import os, sys, re, requests
 import io, gzip, bz2, lzma, tarfile
 
 
@@ -30,18 +30,18 @@ if __name__ == '__main__':
     help='set token')
 
   args = parser.parse_args()
-  ## Leading "http://" can be omitted.
-  if not re.match('^https?://',args.target):
+  # Leading "http://" can be omitted.
+  if not re.match('^https?://', args.target):
     args.target = 'http://' + args.target
   eprint = lambda s: print('error: '+s, file=sys.stderr)
 
   method = 'dump'
-  filename = os.path.basename(args.target)
 
   if not args.overwrite:
-    if any([os.path.exists(f) for f in args.filename]):
-      eprint('file "{}" already exists.'.format(f))
-      exit(1)
+    for f in args.filename:
+      if os.path.exists(f):
+        eprint('file "{}" already exists.'.format(f))
+        exit(1)
 
   try:
     data = {
@@ -55,7 +55,7 @@ if __name__ == '__main__':
         req.raise_for_status()
 
       if args.tarball:
-        dummy,ext = os.path.splitext(args.tarball)
+        dummy, ext = os.path.splitext(args.tarball)
         print(ext)
         if ext == '.gz':
           with gzip.open(args.tarball, 'wb') as arv:
