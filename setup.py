@@ -4,7 +4,7 @@ from setuptools import setup, find_packages
 
 
 with open('README.md', 'r') as fd:
-  version = '1.2'
+  version = '1.3'
   author = 'Ryou Ohsawa'
   email = 'ohsawa@ioa.s.u-tokyo.ac.jp'
   description = 'SIDEX: Simple Data Exchange server over HTTP'

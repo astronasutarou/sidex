@@ -168,7 +168,7 @@ def delete(req, target, **options):
     return Response(emsg('file not found'), status=404)
   except Exception as e:
     eprint(str(e))
-    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    errmsg = emsg(f'unexpected error: {str(e)} ({e.__class__.__name__})')
     return Response(errmsg, status=500)
 
 
@@ -257,7 +257,7 @@ def put(req, target, **options):
     return Response(emsg('file not found'), status=404)
   except Exception as e:
     eprint(str(e))
-    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    errmsg = emsg(f'unexpected error: {str(e)} ({e.__class__.__name__})')
     return Response(errmsg, status=500)
 
 
@@ -368,7 +368,7 @@ def get(req, target, **options):
     return Response(emsg('cannot obtain directory'), status=400)
   except Exception as e:
     eprint(str(e))
-    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    errmsg = emsg(f'unexpected error: {str(e)} ({e.__class__.__name__})')
     return Response(errmsg, status=500)
 
 
@@ -459,7 +459,7 @@ def dump(req, filelist, **options):
     return Response(emsg('cannot obtain directory'), status=400)
   except Exception as e:
     eprint(str(e))
-    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    errmsg = emsg('unexpected error: {str(e)} ({e.__class__.__name__})')
     return Response(errmsg, status=500)
 
 
@@ -536,7 +536,7 @@ def ping(req, target, **options):
     return Response(emsg('file/directory not found'), status=404)
   except Exception as e:
     eprint(str(e))
-    errmsg = emsg('unexpected error: {}'.format(e.__class__.__name__))
+    errmsg = emsg(f'unexpected error: {str(e)} ({e.__class__.__name__})')
     return Response(errmsg, status=500)
 
 
