@@ -24,15 +24,16 @@ By default, only retrieving files (`get`) is available. The `put` and `delete` m
 The HTTP POST method is available to submit a request. Any request should contain the `method` field, which should be one of `get`, `put`, and `delete`. The `token` field may be required in some cases. The followings are samples with `curl`.
 
 ``` sh
-$ curl http:/0.0.0.0:8080/path/to/file -F 'method=get'
-$ curl http:/0.0.0.0:8080/path/to/upload -F 'method=put' -F 'payload=@filename' -F 'token=foo'
-$ curl http:/0.0.0.0:8080/path/to/delete -F 'method=delete' -F 'token=bar'
+$ curl http://0.0.0.0:8080/path/to/file -F 'method=get'
+$ curl http://0.0.0.0:8080/path/to/upload -F 'method=put' -F 'payload=@filename' -F 'token=foo'
+$ curl http://0.0.0.0:8080/path/to/delete -F 'method=delete' -F 'token=bar'
 ```
 
 The package provides a function, `sidex_request()`, which is a wrapper function of `requests.post()`. You can directly execute `sidex.client`.
 
 ``` sh
 $ python -m sidex.client http://0.0.0.0:8080/path/to/file
+$ python -m sidex.client http://0.0.0.0:8080/path/to/file --ping
 $ python -m sidex.client http://0.0.0.0:8080/path/to/upload -f upload_file
 $ python -m sidex.client http://0.0.0.0:8080/path/to/delete -d
 ```
