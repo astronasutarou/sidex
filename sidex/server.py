@@ -15,28 +15,29 @@ if __name__ == '__main__':
   from argparse import ArgumentParser as ap
   import logging
   parser = ap(prog='server', description='sidex server process')
-  parser.add_argument('target', type=str,
+  parser.add_argument(
+    'target', type=str,
     help='target directory')
   parser.add_argument(
-    '--host', dest='host', metavar='host', type=str, default='0.0.0.0',
+    '--host', metavar='host', type=str, default='0.0.0.0',
     help='set server hostname')
   parser.add_argument(
-    '--port', dest='port', metavar='port', type=int, default=8080,
+    '--port', metavar='port', type=int, default=8080,
     help='set server port number')
   parser.add_argument(
-    '--get-token', dest='get_token', metavar='token', type=str,
+    '--get-token', metavar='token', type=str,
     help='limit get function by setting token')
   parser.add_argument(
-    '--put-token', dest='put_token', metavar='token', type=str,
+    '--put-token', metavar='token', type=str,
     help='enable put function by setting token')
   parser.add_argument(
-    '--delete-token', dest='delete_token', metavar='token', type=str,
+    '--delete-token', metavar='token', type=str,
     help='enable delete function by setting token.')
   parser.add_argument(
-    '--subdir', dest='subdir', metavar='subdir', type=str,
+    '--subdir', metavar='subdir', type=str,
     help='set subdirectory')
   parser.add_argument(
-    '--debug', dest='debug', action='store_true',
+    '--debug', action='store_true',
     help='enable debug messages')
 
   args = parser.parse_args()

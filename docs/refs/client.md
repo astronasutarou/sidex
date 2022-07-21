@@ -6,9 +6,9 @@ Files under the `sidex` server can be accessed via HTTP. The `sidex.client` prov
 
 Basic usage of the command line tool provided by `sidex.client` is described as follows:
 
-``` none
+``` console
 $ python -m sidex.client -h
-usage: client [-h] [-d] [--token token] [filename] target
+usage: client [-h] [-d] [-p] [--token token] [filename] target
 
 SIDEX minimal client
 
@@ -17,7 +17,8 @@ positional arguments:
   target         address to SIDEX server
 
 optional arguments:
-  -h, --help            show this help message and exit
-  -d, --delete          delete file
-  --token token         set token
+  -h, --help     show this help message and exit
+  -d, --delete   delete file
+  -p, --ping     send ping message
+  --token token  set token
 ```

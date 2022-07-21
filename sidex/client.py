@@ -8,26 +8,31 @@ A detailed usage is available by typing the following command:
    python -m sidex.client -h
 '''
 
-import os, sys, re, logging, requests
+import os, sys, re, requests
 
 
 if __name__ == '__main__':
   from argparse import ArgumentParser as ap
   parser = ap(prog='client', description='SIDEX minimal client')
-  parser.add_argument('filename', type=str, nargs='?',
+  parser.add_argument(
+    'filename', type=str, nargs='?',
     help='filename to be uploaded (only requred in put mode)')
-  parser.add_argument('target', type=str,
+  parser.add_argument(
+    'target', type=str,
     help='address to SIDEX server')
   parser.add_argument(
-    '-d', '--delete', dest='delete', action='store_true',
+    '-d', '--delete', action='store_true',
     help='delete file')
   parser.add_argument(
-    '--token', dest='token', metavar='token', type=str,
+    '-p', '--ping', action='store_true',
+    help='send ping message')
+  parser.add_argument(
+    '--token', metavar='token', type=str,
     help='set token')
 
   args = parser.parse_args()
-  ## Leading "http://" can be omitted.
-  if not re.match('^https?://',args.target):
+  # Leading "http://" can be omitted.
+  if not re.match('^https?://', args.target):
     args.target = 'http://' + args.target
   eprint = lambda s: print('error: '+s, file=sys.stderr)
 
@@ -42,8 +47,11 @@ if __name__ == '__main__':
     method = 'delete'
   if args.filename is not None:
     method = 'put'
-    with open(args.filename,'rb') as f:
-      files = { 'payload': f.read(), }
+    with open(args.filename, 'rb') as f:
+      files = {'payload': f.read()}
+  if args.ping is True:
+    method = 'ping'
+    files = None
   else:
     files = None
 
@@ -52,7 +60,7 @@ if __name__ == '__main__':
     exit(1)
 
   try:
-    data = { 'method': method, 'token': args.token }
+    data = {'method': method, 'token': args.token}
     req = requests.post(args.target, data=data, files=files)
     if req.ok is False:
       eprint(req.text.strip())
@@ -61,6 +69,8 @@ if __name__ == '__main__':
     if method == 'get':
       with open(filename, 'wb') as f:
         f.write(req.content)
+    elif method == 'ping':
+      pass
     else:
       print(req.text.strip())
   except Exception as e:
