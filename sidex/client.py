@@ -41,19 +41,17 @@ if __name__ == '__main__':
     exit(1)
 
   method = 'get'
+  files = None
   filename = os.path.basename(args.target)
 
+  if args.ping is True:
+    method = 'ping'
   if args.delete is True:
     method = 'delete'
   if args.filename is not None:
     method = 'put'
     with open(args.filename, 'rb') as f:
       files = {'payload': f.read()}
-  if args.ping is True:
-    method = 'ping'
-    files = None
-  else:
-    files = None
 
   if method == 'get' and os.path.exists(filename):
     eprint('file "{}" already exists.'.format(filename))
