@@ -37,6 +37,11 @@ markdown_extensions:
   - pymdownx.snippets:
       check_paths: True
 
+plugins:
+  - search
+  - git-revision-date-localized:
+      type: date
+
 nav:
   - Front Page:
     - Top Page: index.md
