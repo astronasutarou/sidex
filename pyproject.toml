@@ -1,0 +1,36 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sidex"
+version = "1.5"
+description = "SIDEX: Simple Data Exchange server over HTTP"
+readme = "README.md"
+license = { text = "MIT" }
+authors = [
+  { name = "Ryou Ohsawa", email = "ohsawa@ioa.s.u-tokyo.ac.jp" }
+]
+maintainers = [
+  { name = "Ryou Ohsawa", email = "ohsawa@ioa.s.u-tokyo.ac.jp" }
+]
+requires-python = ">=3.7"
+dependencies = [
+  "flask>=2.0",
+  "requests>=2.27",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.7",
+]
+
+[project.urls]
+Homepage = "https://bitbucket.org/ryou_ohsawa/sidex/src/master/"
+
+[tool.setuptools.packages.find]
+where = ["."]
