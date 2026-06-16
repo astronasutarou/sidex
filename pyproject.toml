@@ -9,10 +9,10 @@ description = "SIDEX: Simple Data Exchange server over HTTP"
 readme = "README.md"
 license = { text = "MIT" }
 authors = [
-  { name = "Ryou Ohsawa", email = "ohsawa@ioa.s.u-tokyo.ac.jp" }
+  { name = "Ryou Ohsawa", email = "ryou.ohsawa@nao.ac.jp" }
 ]
 maintainers = [
-  { name = "Ryou Ohsawa", email = "ohsawa@ioa.s.u-tokyo.ac.jp" }
+  { name = "Ryou Ohsawa", email = "ryou.ohsawa@nao.ac.jp" }
 ]
 requires-python = ">=3.9"
 dependencies = [
