@@ -1,5 +1,8 @@
 [build-system]
-requires = ["setuptools>=61.0", "wheel"]
+requires = [
+  "setuptools>=61.0",
+  "wheel",
+]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -32,7 +35,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://bitbucket.org/ryou_ohsawa/sidex/src/master/"
+Homepage = "https://github.com/astronasutarou/sidex"
 
 [tool.setuptools.packages.find]
 where = ["."]
