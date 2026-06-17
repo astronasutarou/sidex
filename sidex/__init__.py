@@ -33,7 +33,10 @@ behaviors of any methods can be overridden.
 from .setup import setup
 from .request import request
 
+__version__ = '1.5.1'
+
 __all__ = [
+    '__version__',
     'setup',
     'request',
 ]

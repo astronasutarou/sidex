@@ -7,9 +7,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sidex"
-version = "1.5.1"
 description = "SIDEX: Simple Data Exchange server over HTTP"
-readme = "README.md"
+readme = { file = "README.md", content-type = "text/markdown" }
 license = "MIT"
 authors = [
   { name = "Ryou Ohsawa", email = "ryou.ohsawa@nao.ac.jp" }
@@ -22,6 +21,7 @@ dependencies = [
   "flask>=2.0",
   "requests>=2.27",
 ]
+dynamic = ["version"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Environment :: Console",
@@ -39,3 +39,11 @@ Homepage = "https://github.com/astronasutarou/sidex"
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[tool.setuptools.dynamic]
+version = { attr = "sidex.__version__" }
+
+[tool.cibuildwheel]
+build = "cp39-* cp310-* cp311-* cp312-*"
+skip = "*-musllinux* pp*"
+test-command = "python -c \"import sidex; print(sidex.__file__)\""
