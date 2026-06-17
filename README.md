@@ -1,6 +1,8 @@
-# Simple Data Exchange server over HTTP
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![CodeQL](https://github.com/astronasutarou/sidex/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/astronasutarou/sidex/actions/workflows/github-code-scanning/codeql)
 [![Documentation Status](https://readthedocs.org/projects/sidex/badge/?version=latest)](https://sidex.readthedocs.io/en/latest/?badge=latest)
+
+# Simple Data Exchange server over HTTP
 
 ## Overview
 This package provides a function to launch a simple file server. Getting, putting, and deleting files on the server via the HTTP POST methods are available. The function `setup_sidex()` returns a `flask` instance. You can launch a simple file server by `run()`.
