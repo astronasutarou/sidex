@@ -7,7 +7,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sidex"
-version = "1.5"
+version = "1.5.1"
 description = "SIDEX: Simple Data Exchange server over HTTP"
 readme = "README.md"
 license = "MIT"
