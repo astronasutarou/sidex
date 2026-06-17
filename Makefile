@@ -1,31 +1,15 @@
-CC     := g++
-TESTPY := --repository-url https://test.pypi.org/legacy/
-LIBS   := -I./src -L./src -lm
-CFLAGS := -std=c++11 -g -Wall -O3
-CXX    := $(CC) $(LIBS) $(CFLAGS)
+EGG_INFO := sidex.egg-info
+BUILD_DIR := build
+DIST_DIR := $(BUILD_DIR)/dist
 
-HEADER :=
-SOURCE := $(wildcard src/*.cc)
-OBJECT := $(patsubst %.cc,%.o,$(SOURCE))
-
-.PHONY: clean build build_pypi upload_test upload_pypi
+.PHONY: clean build
 
 all:
 
-.cc.o: $(HEADER)
-	$(CXX) -o $@ -c $<
-
 build:
-	python setup.py build_ext --inplace
+	python -m build --outdir $(DIST_DIR)
+	python -m build --sdist --outdir $(DIST_DIR)
 
-build_pypi: build
-	python setup.py sdist bdist_wheel -p manylinux1_x86_64
-
-upload_test: build_pypi
-	twine upload --skip-existing $(TESTPY) dist/*
-
-upload_pypi: build_pypi
-	twine upload --skip-existing dist/*
 
 clean:
-	rm -r $(OBJECT)
+	rm -rf $(BUILD_DIR) $(EGG_INFO)
